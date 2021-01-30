@@ -1,10 +1,9 @@
 package jp.co.miraino_katachi.todo;
 
-import ognl.OgnlRuntime;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.logging.Logger;
+
+import ognl.OgnlRuntime;
 
 
 /**
