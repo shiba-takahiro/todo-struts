@@ -8,6 +8,7 @@
 <title>検索結果</title>
 <link rel="STYLESHEET" href="css/normalize.css" type="text/css">
 <link rel="STYLESHEET" href="css/main.css" type="text/css">
+<s:head />
 </head>
 <body>
 <div class="container">
@@ -60,11 +61,11 @@
 						<s:property value="user.name"/>
 					</td>
 					<td>
-						<s:property value="expireDate"/>
+						<s:date name="expireDate" format="yyyy/MM/dd"/>
 					</td>
 					<td>
 						<s:if test="finished">
-							<s:property value="finishedDate" />
+							<s:date name="finishedDate" format="yyyy/MM/dd" />
 						</s:if>
 						<s:else>
 							未

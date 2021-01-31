@@ -38,20 +38,21 @@
 				<tr>
 					<th>担当者</th>
 					<td>
-						<s:select name="userId" list="#session.users"
-							value="#session.currentUser.id" listValue="name" listKey="id" />
+						<s:select name="userId" value="#session.currentUser.id"
+							list="users" listValue="name" listKey="id" />
 					</td>
 				</tr>
 				<tr>
 					<th>期限</th>
 					<td>
-						<s:textfield name="expireDate"/>
+						<input type="date" name="expireDate"
+							value='<s:date name="expireDate" format="yyyy-MM-dd"/>'/>
 					</td>
 				</tr>
 			</table>
+			<s:submit value="登録" />
+			<button type="button" onclick="location.href='list'">キャンセル</button>
 		</s:form>
-		<button type="button" onclick="document.forms[0].submit()">登録</button>
-		<button type="button" onclick="location.href='list'">キャンセル</button>
 	</main>
 
 	<footer>

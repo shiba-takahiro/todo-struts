@@ -46,7 +46,7 @@
 					<tr>
 						<th>期限</th>
 						<td>
-							<s:property value="item.expireDate" />
+							<s:date name="item.expireDate" format="yyyy/MM/dd"/>
 						</td>
 					</tr>
 					<tr>
@@ -61,9 +61,9 @@
 						</td>
 					</tr>
 				</table>
+				<s:submit value="削除" />
+				<button type="button" onclick="location.href='list'">キャンセル</button>
 			</s:form>
-			<button type="button" onclick="document.forms[0].submit()">削除</button>
-			<button type="button" onclick="location.href='list'">キャンセル</button>
 		</main>
 
 		<footer> </footer>
