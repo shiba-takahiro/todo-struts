@@ -2,11 +2,9 @@ package jp.co.miraino_katachi.todo.actions;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.interceptor.SessionAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +21,8 @@ import jp.co.miraino_katachi.todo.entity.User;
 import jp.co.miraino_katachi.todo.exceptions.DAOException;
 import jp.co.miraino_katachi.todo.logic.AddActionLogic;
 
-public class AddAction extends ActionSupport implements SessionAware {
+public class AddAction extends ActionSupport {
 	private static final Logger logger = LoggerFactory.getLogger(AddAction.class);
-
-	private Map<String, Object> session = null;
 
 	private String name;
 	private int userId;
@@ -67,12 +63,17 @@ public class AddAction extends ActionSupport implements SessionAware {
 		this.expireDate = expireDate;
 	}
 
-	public void setSession(Map<String, Object> session) {
-		this.session = session;
-	}
+	public List<User> getUsers() {
+		try {
+			// ユーザプルダウンメニュー用のユーザリスト取得
+			UserDAO userDAO = DAOFactory.createUserDAO();
+			return userDAO.getUsers();
 
-	public Map<String, Object> getSession() {
-		return session;
+		} catch(DAOException e) {
+			logger.error(e.getMessage());
+			addActionError(getText("errors.add"));
+			return null;
+		}
 	}
 
 	@Action(value="add", results = {
@@ -83,20 +84,8 @@ public class AddAction extends ActionSupport implements SessionAware {
 	public String show() {
 		logger.trace("Enter");
 
-		try {
-			// ユーザプルダウンメニュー用のユーザリスト取得
-			UserDAO userDAO = DAOFactory.createUserDAO();
-			List<User> userList = userDAO.getUsers();
-			session.put("users", userList);
-
-			// 期限の初期値は現在の日付
-			expireDate = new Date();
-
-		} catch(DAOException e) {
-			logger.error(e.getMessage());
-			addActionError(getText("errors.add"));
-			return ERROR;
-		}
+		// 期限の初期値は現在の日付
+		this.expireDate = new Date();
 
 		logger.trace("Exit");
 		return SUCCESS;
@@ -110,9 +99,6 @@ public class AddAction extends ActionSupport implements SessionAware {
 	public String execute() {
 		logger.trace("Enter");
 		logger.debug("name = {}, userId = {}, expireDate = {}", name, userId, expireDate);
-
-		// 入力用セッションパラメータを削除
-		session.remove("users");
 
 		try {
 			// 作業登録処理

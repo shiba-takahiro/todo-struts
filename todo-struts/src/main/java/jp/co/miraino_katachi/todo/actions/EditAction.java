@@ -2,11 +2,9 @@ package jp.co.miraino_katachi.todo.actions;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.interceptor.SessionAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +23,8 @@ import jp.co.miraino_katachi.todo.entity.User;
 import jp.co.miraino_katachi.todo.exceptions.DAOException;
 import jp.co.miraino_katachi.todo.logic.EditActionLogic;
 
-public class EditAction extends ActionSupport implements SessionAware {
+public class EditAction extends ActionSupport {
 	private static final Logger logger = LoggerFactory.getLogger(EditAction.class);
-
-	private Map<String, Object> session;
 
 	private int itemId;
 	private boolean finished;
@@ -87,15 +83,20 @@ public class EditAction extends ActionSupport implements SessionAware {
 		this.finished = finished;
 	}
 
+	public List<User> getUsers() {
+		try {
+			// ユーザプルダウンメニュー用のユーザリスト取得
+			UserDAO userDAO = DAOFactory.createUserDAO();
+			return userDAO.getUsers();
+
+		} catch(DAOException e) {
+			logger.error(e.getMessage());
+			addActionError(getText("errors.add"));
+			return null;
+		}
+	}
+
 	public EditAction() {
-	}
-
-	public void setSession(Map<String, Object> session) {
-		this.session = session;
-	}
-
-	public Map<String, Object> getSession() {
-		return session;
 	}
 
 	@Action(value="edit", results = {
@@ -111,12 +112,11 @@ public class EditAction extends ActionSupport implements SessionAware {
 			// 更新対象アイテム取得
 			ItemDAO itemDAO = DAOFactory.createItemDAO();
 			Item item = itemDAO.getItem(itemId);
-			session.put("item", item);
-
-			// ユーザプルダウンメニュー用のユーザリスト取得
-			UserDAO userDAO = DAOFactory.createUserDAO();
-			List<User> userList = userDAO.getUsers();
-			session.put("users", userList);
+			this.itemId = item.getId();
+			this.name =item.getName();
+			this.userId = item.getUser().getId();
+			this.expireDate = item.getExpireDate();
+			this.finished = item.isFinished();
 
 		} catch(DAOException e) {
 			logger.error(e.getMessage());
@@ -138,10 +138,6 @@ public class EditAction extends ActionSupport implements SessionAware {
 	public String execute() {
 		logger.trace("Enter");
 		logger.trace("itemId={}, name={}, userId={}, expireDate={} finished={}", itemId, name, userId, expireDate, finished);
-
-		// セッションに保存した入力用パラメータを削除
-		session.remove("item");
-		session.remove("users");
 
 		try {
 			// 編集処理

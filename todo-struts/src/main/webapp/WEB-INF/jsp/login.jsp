@@ -7,7 +7,7 @@
 <title>ログイン</title>
 <link rel="STYLESHEET" href="css/normalize.css" type="text/css">
 <link rel="STYLESHEET" href="css/main.css" type="text/css">
-
+<s:head />
 </head>
 <body>
 <div class="container">
